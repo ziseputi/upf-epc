@@ -112,7 +112,8 @@ main(int argc, char **argv)
 {
 	GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-	std::map<uint64_t, bool> zmq_sess_map;
+	std::map<uint64_t, struct cdr_msg *> zmq_sess_map;
+	struct cdr_msg *cdr;
 
 	context1 = zmq_ctx_new();
 	context2 = zmq_ctx_new();
@@ -180,8 +181,13 @@ main(int argc, char **argv)
 					<< ")" << std::endl;
 				resp.op_id = rbuf.sess_entry.op_id;
 				resp.dp_id.id = DPN_ID;
-				resp.mtype = DPN_RESPONSE;
-				zmq_sess_map[SESS_ID(rbuf.sess_entry.ue_addr.u.ipv4_addr, DEFAULT_BEARER)] = true;
+				resp.mtype = DPN_CREATE_RESP;
+				cdr = new struct cdr_msg;
+				if (cdr != NULL) {
+					cdr->session_info = rbuf.sess_entry.dp_session;
+					cdr->ue_context = rbuf.sess_entry.ue_context;
+				}
+				zmq_sess_map[SESS_ID(rbuf.sess_entry.ue_addr.u.ipv4_addr, DEFAULT_BEARER)] = cdr;
 				resp.sess_id = rbuf.sess_entry.sess_id;
 				break;
 			case MSG_SESS_MOD:
@@ -194,7 +200,7 @@ main(int argc, char **argv)
 					<< ")" << std::endl;
 				resp.op_id = rbuf.sess_entry.op_id;
 				resp.dp_id.id = DPN_ID;
-				resp.mtype = DPN_RESPONSE;
+				resp.mtype = DPN_MODIFY_RESP;
 				resp.sess_id = rbuf.sess_entry.sess_id;
 				if (zmq_sess_map.find(SESS_ID(rbuf.sess_entry.ue_addr.u.ipv4_addr, DEFAULT_BEARER)) ==
 				    zmq_sess_map.end()) {
@@ -223,7 +229,7 @@ main(int argc, char **argv)
 					<< ")" << std::endl;
 				resp.op_id = rbuf.sess_entry.op_id;
 				resp.dp_id.id = DPN_ID;
-				resp.mtype = DPN_RESPONSE;
+				resp.mtype = DPN_DELETE_RESP;
 				resp.sess_id = rbuf.sess_entry.sess_id;
 				/* why is the ue ip address stored in reverse endian order just in delete message? */
 				if (zmq_sess_map.find(SESS_ID(ntohl(rbuf.sess_entry.ue_addr.u.ipv4_addr), DEFAULT_BEARER)) ==
@@ -237,8 +243,11 @@ main(int argc, char **argv)
 								 + std::to_string(args.bessd_port),
 								 InsecureChannelCredentials()));
 				b.runRemoveCommand(rbuf.sess_entry.ue_addr.u.ipv4_addr, args.encapmod);
-				std::map<std::uint64_t, bool>::iterator it = zmq_sess_map.find(SESS_ID(ntohl(rbuf.sess_entry.ue_addr.u.ipv4_addr),
+				std::map<std::uint64_t, struct cdr_msg *>::iterator it = zmq_sess_map.find(SESS_ID(ntohl(rbuf.sess_entry.ue_addr.u.ipv4_addr),
 														   DEFAULT_BEARER));
+				resp.cdr_msg.ue_context = it->second->ue_context;
+				resp.cdr_msg.session_info = it->second->session_info;
+				if (it->second) delete it->second;
 				zmq_sess_map.erase(it);
 				}
 				break;
