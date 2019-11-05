@@ -995,6 +995,17 @@ message GtpuEchoArg {
 }
 
 /**
+ * The EPCCharging module is used for billing in EPC pipeline(s)
+ *
+ * __Input Gates__: 1
+ * __Output Gates__: 2
+ */
+message EPCChargingArg {
+  string ename = 1; /// name of gtpencap module
+  uint32 dir = 2; /// uplink = 0, downlink = 1
+}
+
+/**
  * The GtpuDecap module trims the GTPU header from the Ethernet frame
  *
  * __Input Gates__: 1
