@@ -1,0 +1,39 @@
+From b4f51c276655bea1bf054d404468db6cf91eef57 Mon Sep 17 00:00:00 2001
+From: Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>
+Date: Wed, 25 Mar 2020 18:12:08 +0000
+Subject: [PATCH] Use iavf instead of i40evf
+
+Signed-off-by: Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>
+---
+ drivers/net/i40e/base/i40e_devids.h | 2 +-
+ drivers/net/iavf/base/iavf_devids.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/i40e/base/i40e_devids.h b/drivers/net/i40e/base/i40e_devids.h
+index f3c59bdea..494433b8e 100644
+--- a/drivers/net/i40e/base/i40e_devids.h
++++ b/drivers/net/i40e/base/i40e_devids.h
+@@ -26,7 +26,7 @@
+ #define I40E_DEV_ID_XXV710_N3000	0x0D58
+ #define I40E_DEV_ID_10G_BASE_T_BC	0x15FF
+ #if defined(INTEGRATED_VF) || defined(VF_DRIVER) || defined(I40E_NDIS_SUPPORT)
+-#define I40E_DEV_ID_VF			0x154C
++#define I40E_DEV_ID_VF			0x164C
+ #define I40E_DEV_ID_VF_HV		0x1571
+ #define I40E_DEV_ID_ADAPTIVE_VF		0x1889
+ #endif /* VF_DRIVER */
+diff --git a/drivers/net/iavf/base/iavf_devids.h b/drivers/net/iavf/base/iavf_devids.h
+index 2cd88d62f..e90eb60b6 100644
+--- a/drivers/net/iavf/base/iavf_devids.h
++++ b/drivers/net/iavf/base/iavf_devids.h
+@@ -9,6 +9,6 @@
+ #define IAVF_INTEL_VENDOR_ID		0x8086
+ 
+ /* Device IDs */
+-#define IAVF_DEV_ID_ADAPTIVE_VF		0x1889
++#define IAVF_DEV_ID_ADAPTIVE_VF		0x154c
+ 
+ #endif /* _IAVF_DEVIDS_H_ */
+-- 
+2.17.1
+
