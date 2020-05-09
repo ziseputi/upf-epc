@@ -58,6 +58,7 @@ WORKDIR bess-${BESS_COMMIT}
 COPY core/modules/ core/modules/
 COPY core/utils/ core/utils/
 COPY patches/bess patches
+COPY protobuf/ protobuf/
 RUN cp -a ${DPDK_DIR} deps/dpdk-19.11.1 && \
     cat patches/* | patch -p1
 RUN CXXARCHFLAGS="-march=$MARCH -Werror=format-truncation -Warray-bounds -fbounds-check -fno-strict-overflow -fno-delete-null-pointer-checks -fwrapv" ./build.py bess && \
